@@ -5,6 +5,7 @@
 @using CarRentalManagement.Data
 @implements IAsyncDisposable
 @inject IDbContextFactory<CarRentalManagement.Data.CarRentalManagementContext> DbFactory
+@attribute [Authorize(Roles = "Administrator, User")]
 
 <PageTitle>Index</PageTitle>
 
@@ -27,16 +28,19 @@
     <TemplateColumn Context="customer">
         <a href="@($"customers/edit?id={customer.Id}")">Edit</a> |
         <a href="@($"customers/details?id={customer.Id}")">Details</a> |
-        <a href="@($"customers/delete?id={customer.Id}")">Delete</a>
+        <AuthorizeView Roles="Administrator">
+            | <a href="@($"customers/delete?id={customer.Id}")">Delete</a>
+        </AuthorizeView>
+
     </TemplateColumn>
 </QuickGrid>
 
 @code {
     private CarRentalManagementContext context = default!;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        context = DbFactory.CreateDbContext();
+        context = await DbFactory.CreateDbContextAsync();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
