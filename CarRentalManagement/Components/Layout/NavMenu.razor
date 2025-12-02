@@ -1,5 +1,6 @@
 ﻿@implements IDisposable
 @inject NavigationManager NavigationManager
+
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">CarRentalManagement</a>
@@ -10,36 +11,42 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
+        <!-- Always visible -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
-        </div> 
-        
+        </div>
+
         <AuthorizeView>
             <Authorized>
+                <!-- Logged-in user's email -->
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span>
+                        @context.User.Identity?.Name
                     </NavLink>
                 </div>
 
-
+                <!-- Car Rental Management entities -->
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="makes">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Makes
                     </NavLink>
                 </div>
+
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="models">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Models
                     </NavLink>
                 </div>
+
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="colours">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Colours
                     </NavLink>
                 </div>
+
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="vehicles">
                         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Vehicles
@@ -58,6 +65,7 @@
                     </NavLink>
                 </div>
 
+                <!-- Logout -->
                 <div class="nav-item px-3">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
@@ -68,7 +76,9 @@
                     </form>
                 </div>
             </Authorized>
+
             <NotAuthorized>
+                <!-- Register / Login when not signed in -->
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Register">
                         <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
@@ -86,6 +96,7 @@
 
 @code {
     private string? currentUrl;
+
     protected override void OnInitialized()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
@@ -102,5 +113,4 @@
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
-
 }

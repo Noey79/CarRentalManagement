@@ -1,4 +1,4 @@
-﻿using CarRentalManagement.Components;
+using CarRentalManagement.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CarRentalManagement.Data;
@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContextFactory<CarRentalManagementContext>(options =>
+builder.Services.AddDbContext<CarRentalManagementContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CarRentalManagementContext") ?? throw new InvalidOperationException("Connection string 'CarRentalManagementContext' not found.")));
+
+builder.Services.AddPooledDbContextFactory<CarRentalManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CarRentalManagementContext") ?? throw new InvalidOperationException("Connection string 'CarRentalManagementContext' not found.")));
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
@@ -27,11 +30,12 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-})
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
     .AddIdentityCookies();
+
 
 builder.Services.AddIdentityCore<CarRentalManagementUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
@@ -60,6 +64,6 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.MapAdditionalIdentityEndpoints(); ;
+app.MapAdditionalIdentityEndpoints();;
 
 app.Run();
